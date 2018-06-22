@@ -41,10 +41,17 @@ public class LineRendererEditor : Editor
 
     void OnSceneGUI()
     {
-        for (int i = 0; i < lr.positionCount; i++)
-        {
-            lr.SetPosition(i, Handles.PositionHandle(lr.GetPosition(i), Quaternion.identity));
-        }
+       for (int i = 0; i < lr.positionCount; i++) {
+           var position = lr.GetPosition (i);
+           if (lr.useWorldSpace == false) {
+               position = lr.transform.TransformPoint (position);
+           }
+           var newPosition = Handles.PositionHandle (position, Quaternion.identity);
+           if (lr.useWorldSpace == false) {
+               newPosition = lr.transform.InverseTransformPoint (newPosition);
+           }
+           lr.SetPosition (i, newPosition);
+       }
     }
 
 }
